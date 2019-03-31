@@ -6,26 +6,49 @@
 /// Section data is a way to store the data from the config
 /// </summary>
 /// <author>Ben Hoffman</author>
-class SectionDataElement
+class ISectionData
 {
 public:
 
-    SectionDataElement( const std::string & aKeyName )
+    ISectionData( const std::string & aKeyName )
         : KeyName( aKeyName )
     {
-
     }
 
-    ~SectionDataElement() = default;
+    virtual ~ISectionData() {};
 
     FORCE_INLINE const std::string & GetKeyName() const { return KeyName; }
     FORCE_INLINE void SetKeyName( const std::string & aName ) { KeyName = aName; }
 
-    void GetData( void* aOutData ) { /* #TODO Use a functor to get the data */ }
+    virtual void GetData( void* aOutData ) {}
 
-private:
+protected:
 
     std::string KeyName;
-    
-    // Function Pointer to get he data
+};
+
+template<class T>
+class SectionDataElement : public ISectionData
+{
+public:
+
+    SectionDataElement( const std::string & aKeyName, T aData ) 
+        : ISectionData( aKeyName ), MyData ( aData )
+    {
+
+    }
+
+    virtual ~SectionDataElement()
+    {
+
+    }
+
+    virtual void GetData( void* aOutData ) override
+    {
+        assert( aOutData != nullptr );
+        T* out = static_cast< T* > ( aOutData );
+        *out = MyData;
+    }
+
+    T MyData;
 };

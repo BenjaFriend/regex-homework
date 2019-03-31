@@ -42,7 +42,7 @@ size_t ConfigParser::Run()
             std::string key = isString_match [ 1 ];
             std::string val = isString_match [ 3 ];
             std::cout << "\tString Key : " << key << " val: " << val << std::endl;
-            //ConfigData[CurrentSection].GetData()
+            ConfigData [ CurrentSection ].AddData< std::string >( key, val );
         }
 
         // Match key value

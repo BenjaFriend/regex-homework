@@ -2,7 +2,7 @@
 
 #include "SectionDataElement.h"
 
-typedef std::unordered_map< std::string, SectionDataElement > SectionMap;
+typedef std::unordered_map< std::string, ISectionData* > SectionMap;
 
 class Section
 {
@@ -19,7 +19,17 @@ public:
     FORCE_INLINE const std::string & GetName() const { return Name; }
     FORCE_INLINE SectionMap & GetData() { return Data; }
 
-    void AddData( const std::string & aKey, const std::string val );
+    template< typename T >
+    void AddData( const std::string & aKey, T val )
+    {
+        if ( Data.find( aKey ) != Data.end() )
+        {
+            std::cerr << "Error: Key " << aKey << " already exists in section " << Name << std::endl;
+            return;
+        }
+        ISectionData* data = new SectionDataElement<T>( aKey, val );
+        Data [ aKey ] = data;
+    }
 
 private:
 
