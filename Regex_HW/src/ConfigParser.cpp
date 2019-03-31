@@ -49,6 +49,17 @@ size_t ConfigParser::Run()
             continue;
         }
 
+        // Look for a string key val pair
+        std::smatch isInt_Match = IsIntPair( line );
+        if ( isInt_Match.size() >= 1 )
+        {
+            for( const auto & w : isInt_Match )
+            {
+                std::cout << "\t\t Int Matches: " << w << std::endl;
+            }
+            continue;
+        }
+
     }
 
     file.close();
@@ -84,9 +95,21 @@ const std::smatch ConfigParser::IsStringPair( const std::string & aSource )
 const std::smatch ConfigParser::IsSectionHeader( const std::string & aSource )
 {
     std::smatch section_match;
+    // I am using a raw string here because then I don't really need to deal with 
+    // the escape characters being used by the compiler instead of regex
     static const std::string raw_str = R"(\\[(.+?)\\]\w*)";
     static const std::regex sectionReg( raw_str );
     std::regex_search( aSource, section_match, sectionReg );
 
     return section_match;
+}
+
+const std::smatch ConfigParser::IsIntPair( const std::string & aSource )
+{
+    std::smatch int_match;
+    static const std::string raw_str = R"((\w+)=(\d*)\s)";
+    static const std::regex intReg( raw_str );
+    std::regex_search( aSource, int_match, intReg );
+
+    return int_match;
 }
