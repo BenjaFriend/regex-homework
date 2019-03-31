@@ -19,6 +19,8 @@ public:
     FORCE_INLINE const std::string & GetName() const { return Name; }
     FORCE_INLINE SectionMap & GetData() { return Data; }
 
+    void AddData( const std::string & aKey, const std::string val );
+
 private:
 
     /** Pointer to the parent section of this */

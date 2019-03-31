@@ -22,3 +22,5 @@ target_include_directories( Catch INTERFACE ${CATCH_INCLUDE_DIR} )
 set( TEST_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/regex-tests.cpp )
 add_executable( tests ${TEST_SOURCES} )
 target_link_libraries( tests Catch )
+
+set_property( TARGET tests PROPERTY CXX_STANDARD 14 )

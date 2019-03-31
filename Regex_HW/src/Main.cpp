@@ -29,6 +29,11 @@ int main( int argc, char* argv [] )
 
     // Create the parser
     ConfigParser Parser( ConfigFilePath );
+    size_t res = Parser.Run();
+    if ( res != C_OK )
+    {
+        std::cerr << "There was an error running the config!" << std::endl;
+    }
 
     return 0;
 }

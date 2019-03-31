@@ -1,14 +1,25 @@
 #include "ConfigParser.h"
 
-ConfigParser::ConfigParser( const std::string & aConfigFile )
-    : ConfigFileName( aConfigFile )
+ConfigParser::ConfigParser()
 {
-    Init();
+    ConfigFileName = DEFAULT_CONFIG_FILE;
 }
 
-void ConfigParser::Init()
+ConfigParser::ConfigParser( const std::string & aConfigFile )
+    : ConfigFileName( aConfigFile )
+{}
+
+ConfigParser::~ConfigParser()
+{
+    // #TODO If we need to, clean up any section headers
+}
+
+size_t ConfigParser::Run()
 {
     std::ifstream file( ConfigFileName, std::ios::in );
+
+    // Use this to keep track of the current section we are in
+    std::string CurrentSection = "";
 
     for ( std::string line; std::getline( file, line ); )
     {
@@ -18,21 +29,40 @@ void ConfigParser::Init()
         std::cout << "Line: " << line << std::endl;
 
         // Look  for  words between the brackets
-        static const std::regex sectionReg( "\\[(.+?)\\]\w*" );
-        std::smatch section_match;
-        std::regex_search( line, section_match, sectionReg );
-
-        if ( section_match.size() )
+        std::smatch isHeader_match = IsSectionHeader( line );
+        if ( isHeader_match.size() >= 1 )
         {
-            AddSection( section_match [ 1 ] );
+            AddSection( isHeader_match [ 1 ] );
+            // Keep track of the current header
+            CurrentSection = isHeader_match [ 1 ];
+        }
+        std::smatch isString_match = IsStringPair( line );
+        if ( isString_match.size() >= 1 )
+        {
+            std::string key = isString_match [ 1 ];
+            std::string val = isString_match [ 3 ];
+            std::cout << "\tString Key : " << key << " val: " << val << std::endl;
+            //ConfigData[CurrentSection].GetData()
         }
 
         // Match key value
-        // Keep track of the current section
 
     }
 
     file.close();
+
+    return C_OK;
+}
+
+const std::smatch ConfigParser::IsStringPair( const std::string & aSource )
+{
+    std::smatch string_match;
+    std::string raw_str = R"((\w+)=(\"(.+?)\"))";
+
+    static const std::regex stringReg( raw_str );
+    std::regex_search( aSource, string_match, stringReg );
+
+    return string_match;
 }
 
 void ConfigParser::AddSection( const std::string & aSectionName )
@@ -48,4 +78,13 @@ void ConfigParser::AddSection( const std::string & aSectionName )
     {
         std::cerr << aSectionName << " already exists!" << std::endl;
     }
+}
+
+const std::smatch ConfigParser::IsSectionHeader( const std::string & aSource )
+{
+    std::smatch section_match;
+    static const std::regex sectionReg( "\\[(.+?)\\]\w*" );
+    std::regex_search( aSource, section_match, sectionReg );
+
+    return section_match;
 }
