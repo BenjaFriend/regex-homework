@@ -2,11 +2,11 @@
 
 #include "pch.h"
 #include <fstream>
-#include "SectionData.h"
+#include "Section.h"
+
 
 class ConfigParser
 {
-    typedef std::unordered_map< std::string, SectionData > SectionMap;
 
 public:
 
@@ -16,9 +16,11 @@ private:
 
     void Init();
 
+    void AddSection( const std::string & aSectionName );
+
     /** The config file name */
     std::string ConfigFileName;
 
-    /** A map of keys and their specific data containers */
-    SectionMap ConfigData;
+    /** A map of sections to their map of data */
+    std::unordered_map< std::string, Section >  ConfigData;
 };

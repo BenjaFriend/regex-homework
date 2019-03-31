@@ -18,13 +18,13 @@ void ConfigParser::Init()
         std::cout << "Line: " << line << std::endl;
 
         // Look  for  words between the brackets
-        static const std::regex sectionReg( "\\[(.+?)\\]" );
+        static const std::regex sectionReg( "\\[(.+?)\\]\w*" );
         std::smatch section_match;
-        std::regex_match( line, section_match, sectionReg );
+        std::regex_search( line, section_match, sectionReg );
 
-        for ( size_t i = 0; i < section_match.size(); ++i )
+        if ( section_match.size() )
         {
-            std::cout << "Regex match: " << section_match [ i ] << std::endl;
+            AddSection( section_match [ 1 ] );
         }
 
         // Match key value
@@ -33,4 +33,19 @@ void ConfigParser::Init()
     }
 
     file.close();
+}
+
+void ConfigParser::AddSection( const std::string & aSectionName )
+{
+    // If this element does not exist
+    if ( ConfigData.find( aSectionName ) == ConfigData.end() )
+    {
+        Section sec( aSectionName, nullptr );
+        ConfigData [ aSectionName ] = sec;
+        std::cout << "Add section: " << sec.GetName() << std::endl;
+    }
+    else
+    {
+        std::cerr << aSectionName << " already exists!" << std::endl;
+    }
 }

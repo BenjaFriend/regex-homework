@@ -6,17 +6,17 @@
 /// Section data is a way to store the data from the config
 /// </summary>
 /// <author>Ben Hoffman</author>
-class SectionData
+class SectionDataElement
 {
 public:
 
-    SectionData( const std::string & aKeyName )
+    SectionDataElement( const std::string & aKeyName )
         : KeyName( aKeyName )
     {
 
     }
 
-    ~SectionData() = default;
+    ~SectionDataElement() = default;
 
     FORCE_INLINE const std::string & GetKeyName() const { return KeyName; }
     FORCE_INLINE void SetKeyName( const std::string & aName ) { KeyName = aName; }
