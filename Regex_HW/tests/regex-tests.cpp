@@ -6,25 +6,6 @@
 #include <regex>
 #include <string>
 
-#include "ConfigParser.h"
-#include "Section.h"
-#include "SectionDataElement.h"
-
-TEST_CASE( "Section Creation", "[Section]" )
-{
-    Section sec( "Sec Name Test", nullptr );
-
-    REQUIRE( sec.GetName() == "Sec Name Test" );
-    REQUIRE( sec.GetParent() == nullptr );
-}
-
-TEST_CASE( "Config Parser", "[Config]" )
-{
-    ConfigParser c;
-   
-    REQUIRE( c.GetSectionCount() == 0 );
-}
-
 /*
 TEST_CASE( "Section Header", "[regex]" )
 {

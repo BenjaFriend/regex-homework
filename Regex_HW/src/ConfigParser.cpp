@@ -35,7 +35,10 @@ size_t ConfigParser::Run()
             AddSection( isHeader_match [ 1 ] );
             // Keep track of the current header
             CurrentSection = isHeader_match [ 1 ];
+            continue;
         }
+        
+        // Look for a string key val pair
         std::smatch isString_match = IsStringPair( line );
         if ( isString_match.size() >= 1 )
         {
@@ -43,26 +46,14 @@ size_t ConfigParser::Run()
             std::string val = isString_match [ 3 ];
             std::cout << "\tString Key : " << key << " val: " << val << std::endl;
             ConfigData [ CurrentSection ].AddData< std::string >( key, val );
+            continue;
         }
-
-        // Match key value
 
     }
 
     file.close();
 
     return C_OK;
-}
-
-const std::smatch ConfigParser::IsStringPair( const std::string & aSource )
-{
-    std::smatch string_match;
-    std::string raw_str = R"((\w+)=(\"(.+?)\"))";
-
-    static const std::regex stringReg( raw_str );
-    std::regex_search( aSource, string_match, stringReg );
-
-    return string_match;
 }
 
 void ConfigParser::AddSection( const std::string & aSectionName )
@@ -80,10 +71,21 @@ void ConfigParser::AddSection( const std::string & aSectionName )
     }
 }
 
+const std::smatch ConfigParser::IsStringPair( const std::string & aSource )
+{
+    std::smatch string_match;
+    static const std::string raw_str = R"((\w+)=(\"(.+?)\"))";
+    static const std::regex stringReg( raw_str );
+    std::regex_search( aSource, string_match, stringReg );
+
+    return string_match;
+}
+
 const std::smatch ConfigParser::IsSectionHeader( const std::string & aSource )
 {
     std::smatch section_match;
-    static const std::regex sectionReg( "\\[(.+?)\\]\w*" );
+    static const std::string raw_str = R"(\\[(.+?)\\]\w*)";
+    static const std::regex sectionReg( raw_str );
     std::regex_search( aSource, section_match, sectionReg );
 
     return section_match;
