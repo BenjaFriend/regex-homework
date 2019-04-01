@@ -15,6 +15,15 @@ ConfigParser::~ConfigParser()
     // #TODO If we need to, clean up any section headers
 }
 
+void ConfigParser::ListAllSections()
+{
+    std::cout << "-------- Sections --------" << std::endl;
+    for ( const auto & section : ConfigData )  
+        std::cout << section.first << std::endl;
+    
+    std::cout << "-------------------------" << std::endl;
+}
+
 size_t ConfigParser::Run()
 {
     std::ifstream file( ConfigFileName, std::ios::in );
@@ -40,7 +49,7 @@ size_t ConfigParser::Run()
 
         // Match strings  -------------------------------------
         std::smatch isString_match = IsStringPair( line );
-        if ( isString_match.size() >= 1 )
+        if ( isString_match.size() >= 3 )
         {
             std::string key = isString_match [ 1 ];
             std::string val = isString_match [ 3 ];
@@ -116,6 +125,21 @@ size_t ConfigParser::Run()
     return C_OK;
 }
 
+void ConfigParser::AddSection( const std::string & aSectionName )
+{
+    // If this element does not exist
+    if ( ConfigData.find( aSectionName ) == ConfigData.end() )
+    {
+        Section sec( aSectionName, nullptr );
+        ConfigData [ aSectionName ] = sec;
+        std::cout << "Add section: " << sec.GetName() << std::endl;
+    }
+    else
+    {
+        std::cerr << aSectionName << " already exists!" << std::endl;
+    }
+}
+
 const std::smatch ConfigParser::IsBoolPair( const std::string & aSource )
 {
     std::smatch bool_match;
@@ -134,21 +158,6 @@ const std::smatch ConfigParser::IsFloatPair( const std::string & aSource )
     std::regex_search( aSource, float_match, floatReg );
 
     return float_match;
-}
-
-void ConfigParser::AddSection( const std::string & aSectionName )
-{
-    // If this element does not exist
-    if ( ConfigData.find( aSectionName ) == ConfigData.end() )
-    {
-        Section sec( aSectionName, nullptr );
-        ConfigData [ aSectionName ] = sec;
-        std::cout << "Add section: " << sec.GetName() << std::endl;
-    }
-    else
-    {
-        std::cerr << aSectionName << " already exists!" << std::endl;
-    }
 }
 
 const std::smatch ConfigParser::IsStringPair( const std::string & aSource )
