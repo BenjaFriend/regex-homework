@@ -30,6 +30,7 @@ size_t ConfigParser::Run()
         std::cout << "Line: " << line << std::endl;
 
         // Look  for  words between the brackets
+        // Match section headers  -------------------------------------
         std::smatch isHeader_match = IsSectionHeader( line );
         if ( isHeader_match.size() >= 1 )
         {
@@ -39,7 +40,7 @@ size_t ConfigParser::Run()
             continue;
         }
 
-        // Look for a string key val pair
+        // Match strings  -------------------------------------
         std::smatch isString_match = IsStringPair( line );
         if ( isString_match.size() >= 1 )
         {
@@ -50,6 +51,7 @@ size_t ConfigParser::Run()
             continue;
         }
 
+        // Match bool  -------------------------------------
         std::smatch isBool_Match = IsBoolPair( line );
         if ( isBool_Match.size() >= 1 )
         {
@@ -67,7 +69,26 @@ size_t ConfigParser::Run()
             continue;
         }
 
-        // Look for a string key val pair
+        // Match Floats  -------------------------------------
+        std::smatch isFloat_Match = IsFloatPair( line );
+        if ( isFloat_Match.size() >= 1 )
+        {
+            try
+            {
+                std::string key = isFloat_Match [ 1 ];
+                std::string val = isFloat_Match [ 2 ];
+                std::string::size_type sz;
+                float res = std::stof( val, &sz );
+                ConfigData [ CurrentSection ].AddData< float >( key, res );
+            }
+            catch ( const std::exception & e )
+            {
+                std::cerr << "Error! " << e.what() << std::endl;
+            }
+            continue;
+        }
+
+        // Match ints  -------------------------------------
         std::smatch isInt_Match = IsIntPair( line );
         if ( isInt_Match.size() >= 1 )
         {
@@ -92,8 +113,7 @@ size_t ConfigParser::Run()
 
             continue;
         }
-
-    }
+    }   //  for each line
 
     file.close();
 
@@ -108,6 +128,16 @@ const std::smatch ConfigParser::IsBoolPair( const std::string & aSource )
     std::regex_search( aSource, bool_match, boolReg );
 
     return bool_match;
+}
+
+const std::smatch ConfigParser::IsFloatPair( const std::string & aSource )
+{
+    std::smatch float_match;
+    static const std::string raw_str = R"((\w+)=(\d*.\d*)f)";
+    static const std::regex floatReg( raw_str );
+    std::regex_search( aSource, float_match, floatReg );
+
+    return float_match;
 }
 
 void ConfigParser::AddSection( const std::string & aSectionName )

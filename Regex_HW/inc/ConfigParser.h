@@ -66,6 +66,13 @@ public:
     /// <returns>A match group will be populated if true</returns>
     static const std::smatch IsBoolPair( const std::string & aSource );
 
+    /// <summary>
+    /// Check if the given string is a float value pair
+    /// </summary>
+    /// <param name="aSource">Source string</param>
+    /// <returns>A match group will be populated if true</returns>
+    static const std::smatch IsFloatPair( const std::string & aSource );
+
 private:
 
     void AddSection( const std::string & aSectionName );

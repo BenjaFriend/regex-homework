@@ -36,7 +36,7 @@ int main( int argc, char* argv [] )
         Section & sec = data [ "nums" ];
         SectionDataMap& map = sec.GetData();
         int outNum = 0;
-        map [ "num1" ]->GetData( ( void* ) &outNum );
+        map [ "num1" ]->GetData( &outNum );
         std::cout << "Num1 isssss : " << outNum << std::endl;
     }
     else
