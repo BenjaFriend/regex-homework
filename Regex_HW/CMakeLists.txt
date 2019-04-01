@@ -3,14 +3,6 @@ cmake_minimum_required ( VERSION 3.8 )
 ############### Project Settings ###############
 project( "Regex_HW" )
 
-# Option to use clang
-option( USE_CLANG "build application with clang" OFF ) # OFF is the default
-
-if( USE_CLANG )
-    set( CMAKE_C_COMPILER   "/usr/bin/clang" )
-    set( CMAKE_CXX_COMPILER "/usr/bin/clang++" )
-endif( USE_CLANG )
-
 # Set Build Dir
 set( CMAKE_BINARY_DIR    "/build" )
 set_property( GLOBAL PROPERTY USE_FOLDERS ON )

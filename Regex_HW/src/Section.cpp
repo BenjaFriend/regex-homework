@@ -17,3 +17,14 @@ Section::~Section()
     
     Data.clear();
 }
+
+void Section::ListData() const 
+{
+    std::cout << "Listing Data in [" << Name << "] " << std::endl;
+    for ( const auto & dataMember : Data )
+    {
+        std::cout << "\t" << dataMember.first << " = ";
+        dataMember.second->ListData();
+        std::cout << std::endl;
+    }
+}

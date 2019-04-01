@@ -25,6 +25,8 @@ public:
     FORCE_INLINE SectionDataMap & GetData() { return Data; }
     FORCE_INLINE const bool IsSubsection() const { return ParentSection != nullptr; }
 
+    void ListData() const;
+
     template< typename T >
     void AddData( const std::string & aKey, T val )
     {

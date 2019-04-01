@@ -22,6 +22,11 @@ public:
 
     virtual void GetData( void* aOutData ) {}
 
+    virtual void ListData()
+    {
+        std::cout << "NULL" << std::endl;
+    }
+
 protected:
 
     std::string KeyName;
@@ -41,6 +46,11 @@ public:
     virtual ~SectionDataElement()
     {
 
+    }
+
+    virtual void ListData() override
+    {
+        std::cout << MyData;
     }
 
     virtual void GetData( void* aOutData ) override

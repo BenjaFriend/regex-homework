@@ -65,6 +65,9 @@ int main( int argc, char* argv [] )
             Parser [ "video" ] [ "multidisplay" ].GetData( &outVal );
             std::cout << "[bool] outVal : " << outVal << std::endl;
         }
+
+        Parser.ListAllSections();
+        Parser [ "video" ].ListData();
     }
     else
     {
