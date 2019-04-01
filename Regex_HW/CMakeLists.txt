@@ -35,6 +35,7 @@ set ( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${MY_COMPILER_FLAGS}" )
 
 ### Setup visual studio source groups / filters ###
 file( GLOB_RECURSE _source_list
+    Main.cpp
     src/*.cpp* src/*.h* src/*.hpp*
     inc/*.cpp* inc/*.h* inc/*.hpp*
 )

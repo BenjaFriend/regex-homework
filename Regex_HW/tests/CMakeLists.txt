@@ -11,15 +11,36 @@ set( CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/_Output/$<CONFIG> )
 # Sets the output directory
 set( CMAKE_RUNTIME_OUTPUT_DIRECTORY "bin" )
 
-include_directories( ../inc ../src )
+include_directories( 
+	src
+	../inc 
+	../src
+)
 
 # Prepare "Catch" library for other executables
 set( CATCH_INCLUDE_DIR   ${CMAKE_CURRENT_SOURCE_DIR}/Catch2/single_include )
 add_library ( Catch INTERFACE )
 target_include_directories( Catch INTERFACE ${CATCH_INCLUDE_DIR} )
 
+
+### Setup visual studio source groups / filters ###
+file( GLOB_RECURSE _source_list
+	src/*.cpp
+    ../src/*.cpp* ../src/*.h* ../src/*.hpp*
+    ../inc/*.cpp* ../inc/*.h* ../inc/*.hpp*
+)
+
+if( MSVC )
+    foreach( _source IN ITEMS ${_source_list} )
+    	get_filename_component( _source_path "${_source}" PATH )
+        string( REPLACE "${CMAKE_SOURCE_DIR}" "" _group_path "${_source_path}" )
+        string( REPLACE "/" "\\" _group_path "${_group_path}" )
+        source_group( "${_group_path}" FILES "${_source}" )
+    endforeach()
+endif()
+
 # Make test executable
-set( TEST_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/regex-tests.cpp )
+set( TEST_SOURCES ${_source_list} )
 add_executable( tests ${TEST_SOURCES} )
 target_link_libraries( tests Catch )
 

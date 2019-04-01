@@ -27,8 +27,6 @@ size_t ConfigParser::Run()
         // Ignore newlines
         if ( line.length() == 0 ) continue;
 
-        std::cout << "Line: " << line << std::endl;
-
         // Look  for  words between the brackets
         // Match section headers  -------------------------------------
         std::smatch isHeader_match = IsSectionHeader( line );
@@ -46,7 +44,6 @@ size_t ConfigParser::Run()
         {
             std::string key = isString_match [ 1 ];
             std::string val = isString_match [ 3 ];
-            std::cout << "\tString Key : " << key << " val: " << val << std::endl;
             ConfigData [ CurrentSection ].AddData< std::string >( key, val );
             continue;
         }
@@ -102,7 +99,6 @@ size_t ConfigParser::Run()
                     std::string::size_type sz;
                     int num = std::stoi( val, &sz );
 
-                    std::cout << "\t\t Int Matches: " << num << std::endl;
                     ConfigData [ CurrentSection ].AddData< int >( key, num );
                 }
             }

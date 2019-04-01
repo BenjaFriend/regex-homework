@@ -8,6 +8,4 @@ project ( "Regex_HW" )
 
 # Include sub-projects.
 add_subdirectory ( "Regex_HW" )
-
-
 add_subdirectory ( "Regex_HW/tests" )

@@ -6,9 +6,10 @@
 #include <regex>
 #include <string>
 
-/*
+#include "ConfigParser.h"
+
 TEST_CASE( "Section Header", "[regex]" )
 {
     auto res = ConfigParser::IsSectionHeader( "[header]" );
     REQUIRE( res.size() == 2 );
-}*/
+}
