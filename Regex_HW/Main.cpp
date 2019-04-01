@@ -35,9 +35,15 @@ int main( int argc, char* argv [] )
         SectionMap & data = Parser.GetData();
         Section & sec = data [ "nums" ];
         SectionDataMap& map = sec.GetData();
+        
         int outNum = 0;
         map [ "num1" ]->GetData( &outNum );
-        std::cout << "Num1 isssss : " << outNum << std::endl;
+        std::cout << "outNum : " << outNum << std::endl;
+
+        std::string outStr = "";
+        map [ "globals" ]->GetData( &outStr );
+        std::cout << "outStr : " << outStr << std::endl;
+
     }
     else
     {

@@ -36,6 +36,11 @@ public:
     SectionMap & GetData() { return  ConfigData; }
 
     /// <summary>
+    /// List all sections in the current config file
+    /// </summary>
+    void ListAllSections();
+
+    /// <summary>
     /// Returns true if this source line is a section header
     /// </summary>
     /// <param name="aSource">The source string to check</param>
