@@ -154,6 +154,8 @@ const std::smatch ConfigParser::IsFloatPair( const std::string & aSource )
 {
     std::smatch float_match;
     static const std::string raw_str = R"((\w+)=(\d*.\d*)f)";
+    // This will parse with +- signs
+    // (\w+)=([-+]?)([0-9]*\.[0-9]+|[0-9]+)f
     static const std::regex floatReg( raw_str );
     std::regex_search( aSource, float_match, floatReg );
 
@@ -176,7 +178,7 @@ const std::smatch ConfigParser::IsSectionHeader( const std::string & aSource )
     // I am using a raw string here because then I don't really need to deal with 
     // the escape characters being used by the compiler instead of regex
     static const std::string raw_str = R"(\[(.*?)\])";
-    // ([^:\[]+?)(?=:|\]) <-- This will check for the sub headings of
+    // (\[\W*(.*?):\W*(.*?)\]) <-- This will check for the sub headings of
     // the regex
     static const std::regex sectionReg( raw_str );
     std::regex_search( aSource, section_match, sectionReg );
