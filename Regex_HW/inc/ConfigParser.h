@@ -33,7 +33,13 @@ public:
 
     const size_t GetSectionCount() const { return ConfigData.size(); }
 
+    /// <summary>
+    /// Get the data of this config
+    /// </summary>
+    /// <returns></returns>
     SectionMap & GetData() { return  ConfigData; }
+
+    Section & operator []( const std::string aSecName ) { return ConfigData [ aSecName ]; }
 
     /// <summary>
     /// List all sections in the current config file

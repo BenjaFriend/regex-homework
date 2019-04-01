@@ -30,26 +30,46 @@ int main( int argc, char* argv [] )
     // Create the parser
     ConfigParser Parser( ConfigFilePath );
     size_t res = Parser.Run();
+
     if ( res == C_OK )
     {
-        SectionMap & data = Parser.GetData();
-        Section & sec = data [ "nums" ];
-        SectionDataMap& map = sec.GetData();
-        
-        int outNum = 0;
-        map [ "num1" ]->GetData( &outNum );
-        std::cout << "outNum : " << outNum << std::endl;
+        std::cout << "===================== Examples =================" << std::endl;
+        SectionMap & fileData = Parser.GetData();
 
-        std::string outStr = "";
-        map [ "globals" ]->GetData( &outStr );
-        std::cout << "outStr : " << outStr << std::endl;
+        // Example of loading an INT from a section called "nums"
+        {
+            // Just pass in a ref to the variable to populate...
+            int outNum = 0;
+            Parser [ "nums" ] [ "num1" ].GetData( &outNum );
 
+            std::cout << "[int] outNum : " << outNum << std::endl;
+        }
+
+        // Example of loading a FLOAT from a section called "video"
+        {
+            float outVal = 0.0f;
+            Parser [ "video" ] [ "scalefactor" ].GetData( &outVal );
+            std::cout << "[float] outVal : " << outVal << std::endl;
+        }
+
+        // Example of loading a STRING from a section called "globals"
+        {
+            std::string outVal = "";
+            Parser [ "globals" ] [ "player" ].GetData( &outVal );
+            std::cout << "[string] outVal : " << outVal << std::endl;
+        }
+
+        // Example of loading a BOOL from a section called "video"
+        {
+            bool outVal;
+            Parser [ "video" ] [ "multidisplay" ].GetData( &outVal );
+            std::cout << "[bool] outVal : " << outVal << std::endl;
+        }
     }
     else
     {
         std::cerr << "There was an error running the config!" << std::endl;
     }
-
 
     return 0;
 }
