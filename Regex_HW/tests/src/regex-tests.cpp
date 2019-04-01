@@ -27,8 +27,6 @@ TEST_CASE( "Section Header", "[headers]" )
         res = ConfigParser::IsSectionHeader( "[42]" );
         REQUIRE( res.size() == 2 );
 
-        res = ConfigParser::IsSectionHeader( "[]" );
-        REQUIRE( res.size() == 2 );
     }
 
     SECTION( "Invalid Headers" )
@@ -40,6 +38,9 @@ TEST_CASE( "Section Header", "[headers]" )
         REQUIRE( res.size() == 0 );
 
         res = ConfigParser::IsSectionHeader( "42" );
+        REQUIRE( res.size() == 0 );
+
+        res = ConfigParser::IsSectionHeader( "[]" );
         REQUIRE( res.size() == 0 );
     }
 }

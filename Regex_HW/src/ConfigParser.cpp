@@ -39,7 +39,7 @@ size_t ConfigParser::Run()
         // Look  for  words between the brackets
         // Match section headers  -------------------------------------
         std::smatch isHeader_match = IsSectionHeader( line );
-        if ( isHeader_match.size() >= 1 )
+        if ( isHeader_match.size() >= 1 && isHeader_match[ 1 ].length() > 0 )
         {
             AddSection( isHeader_match [ 1 ] );
             // Keep track of the current header
