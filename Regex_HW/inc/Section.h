@@ -2,7 +2,7 @@
 
 #include "SectionDataElement.h"
 
-typedef std::unordered_map< std::string, ISectionData* > SectionMap;
+typedef std::unordered_map< std::string, ISectionData* > SectionDataMap;
 
 class Section
 {
@@ -17,7 +17,7 @@ public:
     FORCE_INLINE void SetParent( class Section* aParent ) { ParentSection = aParent; }
     FORCE_INLINE Section* GetParent() const { return ParentSection; }
     FORCE_INLINE const std::string & GetName() const { return Name; }
-    FORCE_INLINE SectionMap & GetData() { return Data; }
+    FORCE_INLINE SectionDataMap & GetData() { return Data; }
 
     template< typename T >
     void AddData( const std::string & aKey, T val )
@@ -40,5 +40,5 @@ private:
     std::string Name;
 
     /** The data inside this section */
-    SectionMap Data;
+    SectionDataMap Data;
 };

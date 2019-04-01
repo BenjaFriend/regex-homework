@@ -8,6 +8,8 @@
 #define C_OK    1   
 #define C_FAIL  2
 
+typedef std::unordered_map< std::string, Section > SectionMap;
+
 class ConfigParser
 {
 
@@ -30,6 +32,8 @@ public:
     size_t Run();
 
     const size_t GetSectionCount() const { return ConfigData.size(); }
+
+    SectionMap & GetData() { return  ConfigData; }
 
     /// <summary>
     /// Returns true if this source line is a section header
@@ -54,6 +58,13 @@ public:
     /// <returns>A match group will be populated if true</returns>
     static const std::smatch IsIntPair( const std::string & aSource );
 
+    /// <summary>
+    /// Check if the given  string is a key value  pair
+    /// with a string data type. 
+    /// </summary>
+    /// <param name="aSource">The source string to check</param>
+    /// <returns>A match group will be populated if true</returns>
+    static const std::smatch IsBoolPair( const std::string & aSource );
 
 private:
 
@@ -63,5 +74,5 @@ private:
     std::string ConfigFileName;
 
     /** A map of sections to their map of data */
-    std::unordered_map< std::string, Section >  ConfigData;
+    SectionMap ConfigData;
 };

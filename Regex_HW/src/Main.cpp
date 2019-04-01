@@ -24,16 +24,26 @@ int main( int argc, char* argv [] )
         }
     }
 
-    std::cout << "Entering the main program with the following config file: " 
+    std::cout << "Entering the main program with the following config file: "
         << ConfigFilePath << std::endl;
 
     // Create the parser
     ConfigParser Parser( ConfigFilePath );
     size_t res = Parser.Run();
-    if ( res != C_OK )
+    if ( res == C_OK )
+    {
+        SectionMap & data = Parser.GetData();
+        Section & sec = data [ "nums" ];
+        SectionDataMap& map = sec.GetData();
+        int outNum = 0;
+        map [ "num1" ]->GetData( ( void* ) &outNum );
+        std::cout << "Num1 isssss : " << outNum << std::endl;
+    }
+    else
     {
         std::cerr << "There was an error running the config!" << std::endl;
     }
+
 
     return 0;
 }
