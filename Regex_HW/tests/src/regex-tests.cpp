@@ -21,12 +21,6 @@ TEST_CASE( "Section Header", "[headers]" )
 
             auto res2 = ConfigParser::IsSectionHeader( "[header:subheader]    #  Comment time!" );
             REQUIRE( res2.IsValid );
-
-            auto res3 = ConfigParser::IsSectionHeader( "[header34]    #  Comment time!" );
-            REQUIRE( res3.IsValid );
-
-            auto res4 = ConfigParser::IsSectionHeader( "[42]" );
-            REQUIRE( res4.IsValid );
         }
     }
 

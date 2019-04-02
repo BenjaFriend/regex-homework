@@ -29,7 +29,7 @@ size_t ConfigParser::Run()
     if ( ConfigFileName.length() == 0 )
     {
         std::cerr << "WARNING: NO CONFIG FILE SPECIFED! " << std::endl;
-        return;
+        return C_NO_CONF_FILE;
     }
     std::ifstream file( ConfigFileName, std::ios::in );
 
@@ -46,17 +46,17 @@ size_t ConfigParser::Run()
         if ( isHeader_match.IsValid )
         {
             // For each of the results in the match
-            for ( size_t i = 0; i < isHeader_match.MatchResult.size(); ++i )
+            for ( size_t i = 1; i < isHeader_match.MatchResult.size(); ++i )
             {
                 if ( isHeader_match.MatchResult [ i ].length() > 0 )
                 {
+                    AddSection( isHeader_match.MatchResult [ i ] );
                     std::cout << "Possible heading: " << isHeader_match.MatchResult [ i ] << std::endl;
+                    // Keep track of the current header
+                    CurrentSection = isHeader_match.MatchResult [ i ];
                 }
             }
 
-            AddSection( isHeader_match.MatchResult [ 1 ] );
-            // Keep track of the current header
-            CurrentSection = isHeader_match.MatchResult [ 1 ];
             continue;
         }
 
@@ -153,12 +153,12 @@ size_t ConfigParser::Run()
     return C_OK;
 }
 
-void ConfigParser::AddSection( const std::string & aSectionName )
+void ConfigParser::AddSection( const std::string & aSectionName, Section * aParentSection )
 {
     // If this element does not exist
     if ( ConfigData.find( aSectionName ) == ConfigData.end() )
     {
-        Section sec( aSectionName, nullptr );
+        Section sec( aSectionName, aParentSection );
         ConfigData [ aSectionName ] = sec;
         std::cout << "Add section: " << sec.GetName() << std::endl;
     }

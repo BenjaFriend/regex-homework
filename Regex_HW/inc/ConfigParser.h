@@ -5,8 +5,9 @@
 #include "Section.h"
 #include "Utils.h"
 
-#define C_OK    1
-#define C_FAIL  2
+#define C_OK            1
+#define C_FAIL          2
+#define C_NO_CONF_FILE  3
 
 typedef std::unordered_map< std::string, Section >  SectionMap;
 
@@ -99,7 +100,12 @@ public:
 
 private:
 
-    void AddSection( const std::string & aSectionName );
+    /// <summary>
+    /// Add a section to this config file given a name and set it's parent if needed
+    /// </summary>
+    /// <param name="aSectionName">Name of the new section</param>
+    /// <param name="aParentSection">The parent section to this [nullptr by default]</param>
+    void AddSection( const std::string & aSectionName, Section * aParentSection = nullptr );
 
     /** The config file name */
     std::string ConfigFileName;
