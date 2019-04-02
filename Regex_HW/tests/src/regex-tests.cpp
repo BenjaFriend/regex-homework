@@ -104,28 +104,23 @@ TEST_CASE( "Float Key Pair Test", "[Float]" )
     SECTION( "Valid Float Pairs" )
     {
         {
-            std::string valid = "resolution=2.0f";
-            auto res = ConfigParser::IsFloatPair( valid );
+            auto res = ConfigParser::IsFloatPair( "resolution=2.0f" );
             REQUIRE( res.IsValid );
         }
         {
-            std::string valid = "resolution=2f";
-            auto res = ConfigParser::IsFloatPair( valid );
+            auto res = ConfigParser::IsFloatPair( "resolution=2f" );
             REQUIRE( res.IsValid );
         }
         {
-            std::string valid = "resolution=-2f";
-            auto res = ConfigParser::IsFloatPair( valid );
+            auto res = ConfigParser::IsFloatPair( "resolution=-2f" );
             REQUIRE( res.IsValid );
         }
         {
-            auto valid = "resolution=+2f";
-            auto res = ConfigParser::IsFloatPair( valid );
+            auto res = ConfigParser::IsFloatPair( "resolution=+2f" );
             REQUIRE( res.IsValid );
         }
         {
-            auto valid = "resolution=+2f";
-            auto res = ConfigParser::IsFloatPair( valid );
+            auto res = ConfigParser::IsFloatPair( "resolution=+2f" );
             REQUIRE( res.IsValid );
         }
     }
@@ -133,28 +128,66 @@ TEST_CASE( "Float Key Pair Test", "[Float]" )
     SECTION( "INVALID Float Pairs" )
     {
         {
-            std::string valid = "resolution=z2.0f";
-            auto res = ConfigParser::IsFloatPair( valid );
+            auto res = ConfigParser::IsFloatPair( "resolution=z2.0f" );
             REQUIRE( !res.IsValid );
         }
         {
-            std::string valid = "=2f";
-            auto res = ConfigParser::IsFloatPair( valid );
+            auto res = ConfigParser::IsFloatPair( "=2f" );
             REQUIRE( !res.IsValid );
         }
         {
-            std::string valid = "#hey this is a comment";
-            auto res = ConfigParser::IsFloatPair( valid );
+            auto res = ConfigParser::IsFloatPair( "#hey this is a comment" );
             REQUIRE( !res.IsValid );
         }
         {
-            auto valid = "f";
-            auto res = ConfigParser::IsFloatPair( valid );
+            auto res = ConfigParser::IsFloatPair( "f" );
             REQUIRE( !res.IsValid );
         }
         {
-            auto valid = "+2f";
-            auto res = ConfigParser::IsFloatPair( valid );
+            auto res = ConfigParser::IsFloatPair( "+2f" );
+            REQUIRE( !res.IsValid );
+        }
+    }
+}
+
+TEST_CASE( "Int Key Pair Test", "[int]" )
+{
+    SECTION( "Valid Int Pairs" )
+    {
+        {
+            auto res = ConfigParser::IsIntPair( "resolution=2" );
+            REQUIRE( res.IsValid );
+        }
+        {
+            auto res = ConfigParser::IsIntPair( "ers=+2" );
+            REQUIRE( res.IsValid );
+        }
+        {
+            auto res = ConfigParser::IsIntPair( "num=-2" );
+            REQUIRE( res.IsValid );
+        }
+        {
+            auto res = ConfigParser::IsIntPair( "reso=225961" );
+            REQUIRE( res.IsValid );
+        }
+        {
+            auto res = ConfigParser::IsIntPair( "reso=-225961" );
+            REQUIRE( res.IsValid );
+        }
+    }
+
+    SECTION( "INVALID Int Pairs" )
+    {
+        {
+            auto res = ConfigParser::IsIntPair( "reso  =-   225961" );
+            REQUIRE( !res.IsValid );
+        }
+        {
+            auto res = ConfigParser::IsIntPair( "=-225961" );
+            REQUIRE( !res.IsValid );
+        }
+        {
+            auto res = ConfigParser::IsIntPair( "=-2259--61" );
             REQUIRE( !res.IsValid );
         }
     }
