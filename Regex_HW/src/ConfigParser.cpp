@@ -35,9 +35,11 @@ size_t ConfigParser::Run()
 
     // Use this to keep track of the current section we are in
     std::string CurrentSection = "";
-
+    std::size_t lineNum = 0;
     for ( std::string line; std::getline( file, line ); )
     {
+        ++lineNum;
+
         // Ignore newlines
         if ( line.length() == 0 ) continue;
 
@@ -146,7 +148,11 @@ size_t ConfigParser::Run()
 
             continue;
         }
-    }   //  for each line
+    
+        // This also prints stuff out for comments, but... I dont't want to make a regex to determine
+        // if it is a comment or not
+        std::cerr << "\tWARNING: Line " << lineNum << " has unrecognized syntax! (this could also be a comment)" << std::endl;
+}   //  for each line
 
     file.close();
 

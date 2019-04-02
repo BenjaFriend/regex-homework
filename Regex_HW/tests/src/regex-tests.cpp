@@ -192,3 +192,38 @@ TEST_CASE( "Int Key Pair Test", "[int]" )
         }
     }
 }
+
+TEST_CASE( "Bool Key Pair test", "[bool]" )
+{
+    SECTION( "Valid Bool Pairs" )
+    {
+        {
+            auto res = ConfigParser::IsBoolPair( "flag=true" );
+            REQUIRE( res.IsValid );
+        }
+        {
+            auto res = ConfigParser::IsBoolPair( "flag=false" );
+            REQUIRE( res.IsValid );
+        }
+    }
+
+    SECTION( "Invalid Bool Pairs" )
+    {
+        {
+            auto res = ConfigParser::IsBoolPair( "flag+=false" );
+            REQUIRE( !res.IsValid );
+        }
+        {
+            auto res = ConfigParser::IsBoolPair( "flag=t" );
+            REQUIRE( !res.IsValid );
+        }
+        {
+            auto res = ConfigParser::IsBoolPair( "flag=f" );
+            REQUIRE( !res.IsValid );
+        }
+        {
+            auto res = ConfigParser::IsBoolPair( "flag=f" );
+            REQUIRE( !res.IsValid );
+        }
+    }
+}
