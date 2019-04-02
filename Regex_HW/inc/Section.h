@@ -10,13 +10,18 @@ public:
 
     Section() {}
 
+    /// <summary>
+    /// Create a section given the name and a pointer to it's parent
+    /// </summary>
+    /// <param name="aName">Name of this section</param>
+    /// <param name="aParent">Pointer to this section's parent [ nullptr by default ]</param>
     Section( const std::string & aName, Section* aParent = nullptr );
 
     ~Section();
 
-    ISectionData & operator []( const std::string aKeyName ) 
-    { 
-        return *Data [ aKeyName ]; 
+    ISectionData & operator []( const std::string aKeyName )
+    {
+        return *Data [ aKeyName ];
     }
 
     FORCE_INLINE void SetParent( class Section* aParent ) { ParentSection = aParent; }
@@ -25,8 +30,16 @@ public:
     FORCE_INLINE SectionDataMap & GetData() { return Data; }
     FORCE_INLINE const bool IsSubsection() const { return ParentSection != nullptr; }
 
+    /// <summary>
+    /// List the data that exists in this section to the console
+    /// </summary>
     void ListData() const;
 
+    /// <summary>
+    /// Add data to this section at the given key
+    /// </summary>
+    /// <param name="aKey">The key to set data in</param>
+    /// <param name="val">The data to set</param>
     template< typename T >
     void AddData( const std::string & aKey, T val )
     {
@@ -35,7 +48,7 @@ public:
             std::cerr << "Error: Key " << aKey << " already exists in section " << Name << std::endl;
             return;
         }
-        ISectionData* data = new SectionDataElement<T>( aKey, val );
+        ISectionData* data = new SectionDataElement< T >( aKey, val );
         Data [ aKey ] = data;
     }
 

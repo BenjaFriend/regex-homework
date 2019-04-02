@@ -12,36 +12,39 @@ TEST_CASE( "Section Header", "[headers]" )
 {
     SECTION( "Valid Headers" )
     {
-        auto res = ConfigParser::IsSectionHeader( "[header]" );
-        REQUIRE( res.size() == 2 );
+        {
+            auto res0 = ConfigParser::IsSectionHeader( "[header]" );
+            REQUIRE( res0.IsValid );
 
-        res = ConfigParser::IsSectionHeader( "[header:subheader]" );
-        REQUIRE( res.size() == 2 );
+            auto res1 = ConfigParser::IsSectionHeader( "[header:subheader]" );
+            REQUIRE( res1.IsValid );
 
-        res = ConfigParser::IsSectionHeader( "[header:subheader]    #  Comment time!" );
-        REQUIRE( res.size() == 2 );
+            auto res2 = ConfigParser::IsSectionHeader( "[header:subheader]    #  Comment time!" );
+            REQUIRE( res2.IsValid );
 
-        res = ConfigParser::IsSectionHeader( "[header34]    #  Comment time!" );
-        REQUIRE( res.size() == 2 );
+            auto res3 = ConfigParser::IsSectionHeader( "[header34]    #  Comment time!" );
+            REQUIRE( res3.IsValid );
 
-        res = ConfigParser::IsSectionHeader( "[42]" );
-        REQUIRE( res.size() == 2 );
-
+            auto res4 = ConfigParser::IsSectionHeader( "[42]" );
+            REQUIRE( res4.IsValid );
+        }
     }
 
     SECTION( "Invalid Headers" )
     {
-        auto res = ConfigParser::IsSectionHeader( "header" );
-        REQUIRE( res.size() == 0 );
+        {
+            auto res0 = ConfigParser::IsSectionHeader( "header" );
+            REQUIRE( !res0.IsValid );
 
-        res = ConfigParser::IsSectionHeader( "# this is a comment!" );
-        REQUIRE( res.size() == 0 );
+            auto res1 = ConfigParser::IsSectionHeader( "# this is a comment!" );
+            REQUIRE( !res1.IsValid );
 
-        res = ConfigParser::IsSectionHeader( "42" );
-        REQUIRE( res.size() == 0 );
+            auto res2 = ConfigParser::IsSectionHeader( "42" );
+            REQUIRE( !res2.IsValid );
 
-        res = ConfigParser::IsSectionHeader( "[]" );
-        REQUIRE( res.size() == 0 );
+            auto res3 = ConfigParser::IsSectionHeader( "[]" );
+            REQUIRE( !res3.IsValid );
+        }
     }
 }
 
@@ -49,40 +52,56 @@ TEST_CASE( "String Key Pair", "[String]" )
 {
     SECTION( "Valid String Pairs" )
     {
-        std::string valid = "resolution=\"1080x700\"";
-        auto res = ConfigParser::IsStringPair( valid );
-        REQUIRE( res.size() != 0 );
+        {
+            auto valid = "resolution=\"1080x700\"";
+            auto res = ConfigParser::IsStringPair( valid );
+            REQUIRE( res.IsValid );
+        }
+        {
+            auto valid = "chartype=\"blue tower\"";
+            auto res = ConfigParser::IsStringPair( valid );
+            REQUIRE( res.IsValid );
+        }
 
-        valid = "chartype=\"blue tower\"";
-        res = ConfigParser::IsStringPair( valid );
-        REQUIRE( res.size() != 0 );
-
-        valid = "chartype=\"blue tower 4242 z\"";
-        res = ConfigParser::IsStringPair( valid );
-        REQUIRE( res.size() != 0 );
-
-        valid = "chartyp56_e=\"blue tower 4242 z\"";
-        res = ConfigParser::IsStringPair( valid );
-        REQUIRE( res.size() != 0 );
+        {
+            auto valid = "chartype=\"blue tower 4242 z\"";
+            auto res = ConfigParser::IsStringPair( valid );
+            REQUIRE( res.IsValid );
+        }
+        {
+            auto valid = "chartyp56_e=\"blue tower 4242 z\"";
+            auto res = ConfigParser::IsStringPair( valid );
+            REQUIRE( res.IsValid );
+        }
+        {
+            auto valid = "chartyp56_e=\"blue tower# ## 4242 z\"";
+            auto res = ConfigParser::IsStringPair( valid );
+            REQUIRE( res.IsValid );
+        }
     }
 
     SECTION( "Invalid String Pairs" )
     {
-        std::string invalid = "resolution=";
-        auto res = ConfigParser::IsStringPair( invalid );
-        REQUIRE( res.size() <= 2 );
-
-        invalid = "=";
-        res = ConfigParser::IsStringPair( invalid );
-        REQUIRE( res.size() <= 2 );
-
-        invalid = "";
-        res = ConfigParser::IsStringPair( invalid );
-        REQUIRE( res.size() <= 2 );
-
-        invalid = "hello     =\"world\"";
-        res = ConfigParser::IsStringPair( invalid );
-        REQUIRE( res.size() <= 2 );
+        {
+            auto invalid = "resolution=";
+            auto res = ConfigParser::IsStringPair( invalid );
+            REQUIRE( !res.IsValid );
+        }
+        {
+            auto invalid = "=";
+            auto res = ConfigParser::IsStringPair( invalid );
+            REQUIRE( !res.IsValid );
+        }
+        {
+            auto invalid = "";
+            auto res = ConfigParser::IsStringPair( invalid );
+            REQUIRE( !res.IsValid );
+        }
+        {
+            auto invalid = "hello     =\"world\"";
+            auto res = ConfigParser::IsStringPair( invalid );
+            REQUIRE( !res.IsValid );
+        }
     }
 }
 
@@ -90,24 +109,59 @@ TEST_CASE( "Float Key Pair Test", "[Float]" )
 {
     SECTION( "Valid Float Pairs" )
     {
-        std::string valid = "resolution=2.0f";
-        auto res = ConfigParser::IsFloatPair ( valid );
-        REQUIRE( res.size() == 4 );
+        {
+            std::string valid = "resolution=2.0f";
+            auto res = ConfigParser::IsFloatPair( valid );
+            REQUIRE( res.IsValid );
+        }
+        {
+            std::string valid = "resolution=2f";
+            auto res = ConfigParser::IsFloatPair( valid );
+            REQUIRE( res.IsValid );
+        }
+        {
+            std::string valid = "resolution=-2f";
+            auto res = ConfigParser::IsFloatPair( valid );
+            REQUIRE( res.IsValid );
+        }
+        {
+            auto valid = "resolution=+2f";
+            auto res = ConfigParser::IsFloatPair( valid );
+            REQUIRE( res.IsValid );
+        }
+        {
+            auto valid = "resolution=+2f";
+            auto res = ConfigParser::IsFloatPair( valid );
+            REQUIRE( res.IsValid );
+        }
+    }
 
-        valid = "resolution=2f";
-        res = ConfigParser::IsFloatPair( valid );
-        REQUIRE( res.size() == 4 );
-
-        valid = "resolution=-2f";
-        res = ConfigParser::IsFloatPair( valid );
-        REQUIRE( res.size() == 4 );
-
-        valid = "resolution=+2f";
-        res = ConfigParser::IsFloatPair( valid );
-        REQUIRE( res.size() == 4 );
-
-        valid = "resolution=+2f";
-        res = ConfigParser::IsFloatPair( valid );
-        REQUIRE( res.size() == 4 );
+    SECTION( "INVALID Float Pairs" )
+    {
+        {
+            std::string valid = "resolution=z2.0f";
+            auto res = ConfigParser::IsFloatPair( valid );
+            REQUIRE( !res.IsValid );
+        }
+        {
+            std::string valid = "=2f";
+            auto res = ConfigParser::IsFloatPair( valid );
+            REQUIRE( !res.IsValid );
+        }
+        {
+            std::string valid = "#hey this is a comment";
+            auto res = ConfigParser::IsFloatPair( valid );
+            REQUIRE( !res.IsValid );
+        }
+        {
+            auto valid = "f";
+            auto res = ConfigParser::IsFloatPair( valid );
+            REQUIRE( !res.IsValid );
+        }
+        {
+            auto valid = "+2f";
+            auto res = ConfigParser::IsFloatPair( valid );
+            REQUIRE( !res.IsValid );
+        }
     }
 }
