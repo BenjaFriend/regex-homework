@@ -45,7 +45,7 @@ TEST_CASE( "Section Header", "[headers]" )
     }
 }
 
-TEST_CASE( "String Key Pair", "[regex]" )
+TEST_CASE( "String Key Pair", "[String]" )
 {
     SECTION( "Valid String Pairs" )
     {
@@ -83,5 +83,31 @@ TEST_CASE( "String Key Pair", "[regex]" )
         invalid = "hello     =\"world\"";
         res = ConfigParser::IsStringPair( invalid );
         REQUIRE( res.size() <= 2 );
+    }
+}
+
+TEST_CASE( "Float Key Pair Test", "[Float]" )
+{
+    SECTION( "Valid Float Pairs" )
+    {
+        std::string valid = "resolution=2.0f";
+        auto res = ConfigParser::IsFloatPair ( valid );
+        REQUIRE( res.size() == 4 );
+
+        valid = "resolution=2f";
+        res = ConfigParser::IsFloatPair( valid );
+        REQUIRE( res.size() == 4 );
+
+        valid = "resolution=-2f";
+        res = ConfigParser::IsFloatPair( valid );
+        REQUIRE( res.size() == 4 );
+
+        valid = "resolution=+2f";
+        res = ConfigParser::IsFloatPair( valid );
+        REQUIRE( res.size() == 4 );
+
+        valid = "resolution=+2f";
+        res = ConfigParser::IsFloatPair( valid );
+        REQUIRE( res.size() == 4 );
     }
 }

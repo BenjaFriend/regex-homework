@@ -11,6 +11,7 @@
 #include <assert.h>
 #include <stdlib.h>  
 #include <unordered_map>
+#include <tuple>
 
 /**************************************************************/
 /* Platform specifications                                    */

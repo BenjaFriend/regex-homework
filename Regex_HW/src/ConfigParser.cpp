@@ -26,6 +26,10 @@ void ConfigParser::ListAllSections()
 
 size_t ConfigParser::Run()
 {
+    if ( ConfigFileName.length() == 0 )
+    {
+        std::cerr << "WARNING: NO CONFIG FILE SPECIFED! " << std::endl;
+    }
     std::ifstream file( ConfigFileName, std::ios::in );
 
     // Use this to keep track of the current section we are in
@@ -38,33 +42,33 @@ size_t ConfigParser::Run()
 
         // Look  for  words between the brackets
         // Match section headers  -------------------------------------
-        std::smatch isHeader_match = IsSectionHeader( line );
-        if ( isHeader_match.size() >= 1 && isHeader_match[ 1 ].length() > 0 )
+        auto isHeader_match = IsSectionHeader( line );
+        if ( isHeader_match.IsValid )
         {
-            AddSection( isHeader_match [ 1 ] );
+            AddSection( isHeader_match.MatchResult [ 1 ] );
             // Keep track of the current header
-            CurrentSection = isHeader_match [ 1 ];
+            CurrentSection = isHeader_match.MatchResult [ 1 ];
             continue;
         }
 
         // Match strings  -------------------------------------
-        std::smatch isString_match = IsStringPair( line );
-        if ( isString_match.size() >= 3 )
+        auto isString_match = IsStringPair( line );
+        if ( isString_match.IsValid )
         {
-            std::string key = isString_match [ 1 ];
-            std::string val = isString_match [ 3 ];
+            std::string key = isString_match.MatchResult [ 1 ];
+            std::string val = isString_match.MatchResult [ 3 ];
             ConfigData [ CurrentSection ].AddData< std::string >( key, val );
             continue;
         }
 
         // Match bool  -------------------------------------
-        std::smatch isBool_Match = IsBoolPair( line );
-        if ( isBool_Match.size() >= 1 )
+        auto isBool_Match = IsBoolPair( line );
+        if ( isBool_Match.IsValid )
         {
             try
             {
-                std::string key = isBool_Match [ 1 ];
-                std::string val = isBool_Match [ 2 ];
+                std::string key = isBool_Match.MatchResult [ 1 ];
+                std::string val = isBool_Match.MatchResult [ 2 ];
                 bool res = ( val == "true" ? true : false );
                 ConfigData [ CurrentSection ].AddData< bool >( key, res );
             }
@@ -76,15 +80,24 @@ size_t ConfigParser::Run()
         }
 
         // Match Floats  -------------------------------------
-        std::smatch isFloat_Match = IsFloatPair( line );
-        if ( isFloat_Match.size() >= 1 )
+        auto isFloat_Match = IsFloatPair( line );
+        if ( isFloat_Match.IsValid )
         {
             try
             {
-                std::string key = isFloat_Match [ 1 ];
-                std::string val = isFloat_Match [ 2 ];
+                std::string key = isFloat_Match.MatchResult [ 1 ];
+                std::string signVal = isFloat_Match.MatchResult [ 2 ];
+                std::string floatVal = isFloat_Match.MatchResult [ 3 ];
+
+                // get float value from string
                 std::string::size_type sz;
-                float res = std::stof( val, &sz );
+                float res = std::stof( floatVal, &sz );
+
+                // Apply sign
+                if ( signVal.length() > 0 )                   
+                    res *= ( signVal [ 0 ] == '-' ? -1.0f : 1.0f );
+                
+                // Add data to the current section
                 ConfigData [ CurrentSection ].AddData< float >( key, res );
             }
             catch ( const std::exception & e )
@@ -95,13 +108,13 @@ size_t ConfigParser::Run()
         }
 
         // Match ints  -------------------------------------
-        std::smatch isInt_Match = IsIntPair( line );
-        if ( isInt_Match.size() >= 1 )
+        MatchRes isInt_Match = IsIntPair( line );
+        if ( isInt_Match.IsValid )
         {
             try
             {
-                std::string key = isInt_Match [ 1 ];
-                std::string val = isInt_Match [ 2 ];
+                std::string key = isInt_Match.MatchResult [ 1 ];
+                std::string val = isInt_Match.MatchResult [ 2 ];
                 if ( val.length() > 0 )
                 {
                     // Put string value to int
@@ -140,39 +153,37 @@ void ConfigParser::AddSection( const std::string & aSectionName )
     }
 }
 
-const std::smatch ConfigParser::IsBoolPair( const std::string & aSource )
+const MatchRes ConfigParser::IsBoolPair( const std::string & aSource )
 {
     std::smatch bool_match;
     static const std::string raw_str = R"((\w+)=(true|false))";
     static const std::regex boolReg( raw_str );
     std::regex_search( aSource, bool_match, boolReg );
 
-    return bool_match;
+    return  MatchRes( ( bool_match.size() ? true : false ), bool_match );
 }
 
-const std::smatch ConfigParser::IsFloatPair( const std::string & aSource )
+const MatchRes ConfigParser::IsFloatPair( const std::string & aSource )
 {
     std::smatch float_match;
-    static const std::string raw_str = R"((\w+)=(\d*.\d*)f)";
-    // This will parse with +- signs
-    // (\w+)=([-+]?)([0-9]*\.[0-9]+|[0-9]+)f
+    static const std::string raw_str = R"((\w+)=([-+]?)([0-9]*\.[0-9]+|[0-9]+)f)";
     static const std::regex floatReg( raw_str );
-    std::regex_search( aSource, float_match, floatReg );
-
-    return float_match;
+    std::regex_search( aSource, float_match, floatReg );    
+    
+    return MatchRes( ( float_match.size() ? true : false ), float_match );
 }
 
-const std::smatch ConfigParser::IsStringPair( const std::string & aSource )
+const MatchRes ConfigParser::IsStringPair( const std::string & aSource )
 {
     std::smatch string_match;
     static const std::string raw_str = R"((\w+)=(\"(.+?)\"))";
     static const std::regex stringReg( raw_str );
     std::regex_search( aSource, string_match, stringReg );
 
-    return string_match;
+    return MatchRes( ( string_match.size() ? true : false ), string_match );
 }
 
-const std::smatch ConfigParser::IsSectionHeader( const std::string & aSource )
+const MatchRes ConfigParser::IsSectionHeader( const std::string & aSource )
 {
     std::smatch section_match;
     // I am using a raw string here because then I don't really need to deal with 
@@ -183,15 +194,15 @@ const std::smatch ConfigParser::IsSectionHeader( const std::string & aSource )
     static const std::regex sectionReg( raw_str );
     std::regex_search( aSource, section_match, sectionReg );
 
-    return section_match;
+    return MatchRes( ( section_match.size() && section_match [ 1 ].length() > 0 ? true : false ), section_match );
 }
 
-const std::smatch ConfigParser::IsIntPair( const std::string & aSource )
+const MatchRes ConfigParser::IsIntPair( const std::string & aSource )
 {
     std::smatch int_match;
     static const std::string raw_str = R"((\w+)=(\d*))";
     static const std::regex intReg( raw_str );
     std::regex_search( aSource, int_match, intReg );
 
-    return int_match;
+    return MatchRes( ( int_match.size() ? true : false ), int_match );
 }
